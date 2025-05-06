@@ -69,7 +69,7 @@
 
     // Enviar la suscripción para notificaciones push cuando el cliente se registre
     if ('serviceWorker' in navigator && 'PushManager' in window) {
-      navigator.serviceWorker.register('https://socketsprueba.onrender.com/service-worker.js')
+      navigator.serviceWorker.register('/service-worker.js')
         .then(function(registration) {
           console.log('Service Worker registrado', registration);
 
