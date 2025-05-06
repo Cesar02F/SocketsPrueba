@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const cors = require('cors');  // Importa el middleware CORS
 
 // Crear una aplicación Express
 const app = express();
@@ -8,6 +9,14 @@ const server = http.createServer(app);
 
 // Configurar Socket.io
 const io = socketIo(server);
+
+// Configuración de CORS
+app.use(cors({
+  origin: 'https://prueba83.b-ebs.com',  // El dominio desde el cual se hará la conexión (puedes poner más dominios si lo necesitas)
+  // origin: '*' // Permitir cualquier origen (no recomendado para producción)
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 // Servir los archivos estáticos desde la carpeta 'public'
 app.use(express.static('public'));
