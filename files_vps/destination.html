@@ -1,4 +1,3 @@
-<!-- NO SE ESTA UTULIZANDO ESTE ARCHIVO EN EL PROYECTO -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,10 +53,14 @@
   </div>
 
   <!-- Cargar el script de Socket.io -->
-  <script src="/socket.io/socket.io.js"></script>
+  <!--<script src="/socket.io/socket.io.js"></script>-->
+  <!--<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>-->
+  <script src="/socket.io/socket.io.min.js"></script>
+
   <script>
     // Conectar al servidor WebSocket
-    const socket = io();
+    // const socket = io();
+    const socket = io('https://socketsprueba.onrender.com');  // Conectar al servidor remoto
 
     // Referencias a los elementos DOM
     const messageModal = document.getElementById('messageModal');
@@ -66,7 +69,7 @@
 
     // Enviar la suscripción para notificaciones push cuando el cliente se registre
     if ('serviceWorker' in navigator && 'PushManager' in window) {
-      navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('https://socketsprueba.onrender.com/service-worker.js')
         .then(function(registration) {
           console.log('Service Worker registrado', registration);
 

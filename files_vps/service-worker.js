@@ -1,4 +1,3 @@
-// NO SE ESTA UTULIZANDO ESTE ARCHIVO EN EL PROYECTO
 self.addEventListener('push', function(event) {
     const options = {
       body: event.data.text(),
