@@ -8,12 +8,17 @@ const app = express();
 const server = http.createServer(app);
 
 // Configurar Socket.io
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: 'https://prueba83.b-ebs.com',  // Permitir solo este dominio (puedes agregar más dominios si lo necesitas)
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+  }
+});
 
-// Configuración de CORS
+// Configuración de CORS para Express (si no la has cambiado)
 app.use(cors({
-  origin: 'https://prueba83.b-ebs.com',  // El dominio desde el cual se hará la conexión (puedes poner más dominios si lo necesitas)
-  // origin: '*' // Permitir cualquier origen (no recomendado para producción)
+  origin: 'https://prueba83.b-ebs.com',  // El dominio desde el cual se hará la conexión
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));
