@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Mensajes</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Enviar Mensajes al Cliente Destino</h1>
+
+  <!-- Formulario para escribir un mensaje -->
+  <input type="text" id="messageInput" placeholder="Escribe un mensaje...">
+  <button id="sendMessageBtn">Enviar Mensaje</button>
+
+  <!-- Cargar el script de Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Conectar al servidor WebSocket
+    const socket = io();
+
+    // Referencias a los elementos DOM
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+    // Enviar el mensaje al servidor cuando el botón es presionado
+    sendMessageBtn.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        socket.emit('sendMessage', message);  // Enviar el mensaje al servidor
+        messageInput.value = '';  // Limpiar el campo de entrada
+      }
+    });
+  </script>
+</body>
+</html>

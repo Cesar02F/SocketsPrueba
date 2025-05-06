@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recibir Mensajes</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    
+    /* Estilos para el modal */
+    #messageModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+      justify-content: center;
+      align-items: center;
+    }
+    #modalContent {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+      min-width: 300px;
+    }
+    #closeBtn {
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #closeBtn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Recibir Mensajes</h1>
+
+  <!-- Modal para mostrar los mensajes -->
+  <div id="messageModal">
+    <div id="modalContent">
+      <h2>Nuevo Mensaje</h2>
+      <p id="modalMessage"></p>
+      <button id="closeBtn">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Cargar el script de Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Conectar al servidor WebSocket
+    const socket = io();
+
+    // Referencias a los elementos DOM
+    const messageModal = document.getElementById('messageModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // Enviar la suscripción para notificaciones push cuando el cliente se registre
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registrado', registration);
+
+          // Aquí, podemos obtener la suscripción y enviarla al servidor para recibir notificaciones push
+          registration.pushManager.getSubscription()
+            .then(function(subscription) {
+              if (!subscription) {
+                console.log("El cliente no está suscrito a notificaciones");
+              } else {
+                console.log("Suscripción obtenida:", subscription);
+              }
+            })
+            .catch(function(error) {
+              console.error("Error al obtener la suscripción de push", error);
+            });
+        })
+        .catch(function(error) {
+          console.error('Error al registrar el Service Worker', error);
+        });
+    }
+
+    // Escuchar por nuevos mensajes desde el servidor
+    socket.on('receiveMessage', (message) => {
+      modalMessage.textContent = message;  // Mostrar el mensaje en el modal
+      messageModal.style.display = 'flex';  // Mostrar el modal
+
+      // Mostrar una notificación si el navegador permite notificaciones
+      if (Notification.permission === "granted") {
+        new Notification("Nuevo Mensaje", {
+          body: message,
+          icon: 'icon.png', // Puedes poner un icono aquí si lo deseas
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === "granted") {
+            new Notification("Nuevo Mensaje", {
+              body: message,
+              icon: 'icon.png', // Puedes poner un icono aquí si lo deseas
+            });
+          }
+        });
+      }
+    });
+
+    // Cerrar el modal cuando el usuario haga clic en el botón de cerrar
+    closeBtn.addEventListener('click', () => {
+      messageModal.style.display = 'none';  // Ocultar el modal
+    });
+
+    // Cerrar el modal si se hace clic fuera del contenido del modal
+    window.addEventListener('click', (event) => {
+      if (event.target === messageModal) {
+        messageModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
